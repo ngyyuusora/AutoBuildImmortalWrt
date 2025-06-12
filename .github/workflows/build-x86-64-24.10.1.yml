@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set executable permissions
-        run: chmod +x ${{ github.workspace }}/x86-64/build.sh
+        run: chmod +x ${{ github.workspace }}/x86-64/24.10/build.sh
 
 
       - name: Validate PPPoE Inputs
@@ -75,10 +75,13 @@ jobs:
               immortalwrt/imagebuilder:x86-64-openwrt-24.10.1 /bin/bash /home/build/immortalwrt/build.sh
           done
 
+      - name: Debug list generated files
+        run: ls -l ${{ github.workspace }}/bin/targets/x86/64/
+
       - name: Generate Firmware SHA-256
         run: |
-          cp ${{ github.workspace }}/bin/targets/x86/64/*squashfs-combined-efi.img.gz ${{ github.workspace }}
-          for file in *squashfs-combined-efi.img.gz; do
+          cp ${{ github.workspace }}/bin/targets/x86/64/*ext4-combined-efi.img.gz ${{ github.workspace }}
+          for file in *ext4-combined-efi.img.gz; do
             sha256sum "$file" > "$file.sha256"
             sha256sum -c "$file.sha256"
           done
@@ -98,7 +101,7 @@ jobs:
           tag_name: Autobuild-x86-64
           body_path: ${{ github.workspace }}/info.md
           files: |
-            ${{ github.workspace }}/*squashfs-combined-efi.img.gz
+            ${{ github.workspace }}/*ext4-combined-efi.img.gz
             ${{ github.workspace }}/*.sha256
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
